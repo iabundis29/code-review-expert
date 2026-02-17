@@ -8,6 +8,12 @@ A comprehensive code review skill for AI agents. Performs structured reviews wit
 npx skills add sanyuan0704/code-review-expert
 ```
 
+Or via Agent Skills:
+
+```bash
+npx agent-skills-cli install @sanyuan0704/code-review-expert
+```
+
 ## Features
 
 - **SOLID Principles** - Detect SRP, OCP, LSP, ISP, DIP violations
