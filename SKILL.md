@@ -7,7 +7,26 @@ description: "Expert code review of current git changes with a senior engineer l
 
 ## Overview
 
-Perform a structured review of the current git changes with focus on SOLID, architecture, removal candidates, and security risks. Default to review-only output unless the user asks to implement changes.
+Perform a structured review with focus on SOLID, architecture, removal candidates, and security risks. Default to review-only output unless the user asks to implement changes.
+
+## Initial Step: Choose Review Mode
+
+Before starting, **ask the user which review mode they want**:
+
+```
+What would you like me to review?
+
+1. **Specific PR** - Review a pull request (need PR URL or number)
+2. **Compare Against Branch** - Review current changes against a target branch (e.g., main, develop, release)
+3. **Review Current Changes** - Review staged or uncommitted changes in your working directory
+
+Please choose one or provide details (e.g., PR link, target branch, or confirm working directory review).
+```
+
+**Why this matters**:
+- **Specific PR**: Reviews the PR diff already pushed to remote (no local state needed)
+- **Compare Against Branch**: Reviews your local changes against a branch baseline (good for in-progress work)
+- **Current Changes**: Reviews staged/unstaged/uncommitted changes (good for pre-commit review)
 
 ## Severity Levels
 
