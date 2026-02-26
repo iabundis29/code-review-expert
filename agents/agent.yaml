@@ -27,8 +27,11 @@ description: |
 workflow:
   steps:
     - name: "Preflight Context"
-      description: "Analyze git diff scope, scale, and critical paths"
-      
+      description: "Confirm target branch and analyze git diff scope, scale, critical paths"
+      notes:
+        - "First step: Ask user which branch this PR is against (main, develop, release/x.y, etc.)"
+        - "This determines the baseline for comparison"
+        - "Different branches have different stability requirements"
     - name: "SOLID & Architecture"
       description: "Check architecture quality and design patterns"
       reference: "references/solid-checklist.md"

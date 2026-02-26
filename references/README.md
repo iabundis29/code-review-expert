@@ -124,7 +124,13 @@ Template for planning safe code removal and refactoring.
 
 ### For Code Reviewers
 
-1. **Preview Changes**: Use `git diff` to scope what was changed
+1. **Confirm Target Branch**: Ask which branch this PR is against
+   - Could be: `main`, `develop`, `release/1.2.0`, `staging`, feature branch, hotfix, etc.
+   - This is the baseline for git comparison
+   - Different branches have different stability requirements
+   - Use: `git diff origin/TARGET_BRANCH`
+
+2. **Preview Changes**: Use `git diff` to scope what was changed
 2. **Identify File Types**: Determine which checklists to load
 3. **Load Relevant Checklists**: Based on file types:
    - Always load: `code-quality-checklist.md`, `security-checklist.md`, `solid-checklist.md`

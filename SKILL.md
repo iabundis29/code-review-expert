@@ -22,14 +22,28 @@ Perform a structured review of the current git changes with focus on SOLID, arch
 
 ### 1) Preflight context
 
+- **Confirm target branch first**: Ask which branch this PR is against (not always `main`/`master`)
+  - Could be: `main`, `develop`, `release/x.y.z`, `staging`, feature branch, etc.
+  - This determines the baseline for comparison
+  - Different base branches = different diff = different review scope
+  
 - Use `git status -sb`, `git diff --stat`, and `git diff` to scope changes.
 - If needed, use `rg` or `grep` to find related modules, usages, and contracts.
 - Identify entry points, ownership boundaries, and critical paths (auth, payments, data writes, network).
+
+**Prompt user for context:**
+```
+Before I review, please confirm:
+1. What branch is this PR merging INTO? (e.g., main, release/1.2.0, develop)
+2. Should I compare against that branch, or a different baseline?
+3. Any specific areas you want me to focus on?
+```
 
 **Edge cases:**
 - **No changes**: If `git diff` is empty, inform user and ask if they want to review staged changes or a specific commit range.
 - **Large diff (>500 lines)**: Summarize by file first, then review in batches by module/feature area.
 - **Mixed concerns**: Group findings by logical feature, not just file order.
+- **Release branch**: Changes against release branches may have stricter stability requirements than develop
 
 ### 2) SOLID + architecture smells
 
@@ -179,6 +193,10 @@ See `references/README.md` for comprehensive index and usage guide.
 ### Step 1: Preflight Context - Key Questions
 
 **What to analyze:**
+- **FIRST: Confirm target branch** - What branch is this PR merging into?
+  - Examples: `main`, `develop`, `release/1.2.0`, `staging`, `hotfix/bug-fix`
+  - This is the baseline for git diff
+  - Different branches = different scope and stability requirements
 - How many files changed? (2 vs 20 vs 100)
 - Feature, bugfix, or refactor?
 - Changes in critical paths (auth, payments, database)?
@@ -187,9 +205,24 @@ See `references/README.md` for comprehensive index and usage guide.
 **Commands to run:**
 ```bash
 git status -sb              # Quick overview
-git diff --stat             # File-level summary
-git diff                    # Full diff
+git branch -a               # List all branches
+git diff --stat origin/TARGET_BRANCH  # Compare against target
+git diff origin/TARGET_BRANCH # Full diff
 git diff --name-only | wc -l # Count files
+```
+
+**🔴 Critical First Step - Ask User**:
+```
+Which branch is this PR against?
+  [ ] main/master
+  [ ] develop
+  [ ] release/x.y.z (which version?)
+  [ ] staging
+  [ ] feature branch (which feature?)
+  [ ] hotfix branch
+  [ ] other (specify)
+
+I'll use this as the baseline for comparison.
 ```
 
 ---
