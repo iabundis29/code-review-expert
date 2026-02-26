@@ -32,7 +32,7 @@
 | **Location** | `path/to/file.ts:line` |
 | **Why defer** | Active consumers, needs migration, stakeholder sign-off |
 | **Preconditions** | Feature flag off for 2 weeks, telemetry shows 0 usage |
-| **Breaking changes** | List any API/contract changes |
+| **Breaking changes** | List any API/contract changes (function signature, return type, removed endpoints, deprecated fields) |
 | **Migration plan** | Steps for consumers to migrate |
 | **Timeline** | Target date or sprint |
 | **Owner** | Person/team responsible |

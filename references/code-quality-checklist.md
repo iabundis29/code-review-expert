@@ -12,7 +12,7 @@
 - **Overly broad catch**: Catching `Exception`/`Error` base class instead of specific types
 - **Error information leakage**: Stack traces or internal details exposed to users
 - **Missing error handling**: No try-catch around fallible operations (I/O, network, parsing)
-- **Async error handling**: Unhandled promise rejections, missing `.catch()`, no error boundary
+- **Async error handling**: Unhandled promise rejections, missing `.catch()` or `try/await`, no error boundary, fire-and-forget async operations without logging
 
 ### Best Practices to Check
 
@@ -34,7 +34,7 @@
 
 ### CPU-Intensive Operations
 
-- **Expensive operations in hot paths**: Regex compilation, JSON parsing, crypto in loops
+- **Expensive operations in hot paths**: Regex compilation (recompile on every match?), JSON parsing (serialize/deserialize per request?), crypto operations in request loops, DOM queries in render paths
 - **Blocking main thread**: Sync I/O, heavy computation without worker/async
 - **Unnecessary recomputation**: Same calculation done multiple times
 - **Missing memoization**: Pure functions called repeatedly with same inputs
@@ -83,7 +83,7 @@
 
 - **Missing null checks**: Accessing properties on potentially null objects
 - **Truthy/falsy confusion**: `if (value)` when `0` or `""` are valid
-- **Optional chaining overuse**: `a?.b?.c?.d` hiding structural issues
+- **Optional chaining overuse**: `a?.b?.c?.d` silently masks null/undefined bugs; prefer explicit null checks to catch structural issues early
 - **Null vs undefined inconsistency**: Mixed usage without clear convention
 
 ### Empty Collections

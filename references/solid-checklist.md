@@ -45,7 +45,7 @@
 | **Long method** | Function > 30 lines, multiple levels of nesting |
 | **Feature envy** | Method uses more data from another class than its own |
 | **Data clumps** | Same group of parameters passed together repeatedly |
-| **Primitive obsession** | Using strings/numbers instead of domain types |
+| **Primitive obsession** | Using strings/numbers instead of domain types (e.g., `userId: string` instead of type `UserId`, `price: number` instead of type `Money`) |
 | **Shotgun surgery** | One change requires edits across many files |
 | **Divergent change** | One file changes for many unrelated reasons |
 | **Dead code** | Unreachable or never-called code |

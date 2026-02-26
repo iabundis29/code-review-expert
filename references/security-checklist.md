@@ -19,7 +19,7 @@
 ## JWT & Token Security
 
 - Algorithm confusion attacks (accepting `none` or `HS256` when expecting `RS256`)
-- Weak or hardcoded secrets
+- Weak secrets or hardcoded secrets (no rotation, poor entropy, hardcoded in code)
 - Missing expiration (`exp`) or not validating it
 - Sensitive data in JWT payload (tokens are base64, not encrypted)
 - Not validating `iss` (issuer) or `aud` (audience)
