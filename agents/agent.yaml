@@ -1,7 +1,95 @@
 interface:
   display_name: "Code Review Expert"
-  short_description: "Senior engineer code review: SOLID, security, performance, error handling"
-  default_prompt: "Review current git changes for SOLID violations, security risks, race conditions, error handling issues, performance problems, and boundary condition bugs."
+  short_description: "Senior engineer code review: SOLID, security, performance, TypeScript, React Native, Redux, native bridges"
+  default_prompt: "Review current git changes with expert lens: SOLID violations, security risks, race conditions, error handling, performance, boundary conditions, component organization, type safety, React Native patterns, Redux state management, and native bridge issues."
+
+description: |
+  Expert code review agent that performs structured reviews of git changes with focus on:
+  
+  Core Areas:
+  - SOLID principles and architecture smells
+  - Security vulnerabilities and runtime risks
+  - Error handling and boundary conditions
+  - Performance and caching patterns
+  
+  Technology-Specific:
+  - TypeScript type safety and best practices
+  - React/React Native component organization and lifecycle
+  - Redux state management and selectors
+  - Swift/Kotlin/native bridge communication
+  
+  Severity Levels:
+  - P0 (Critical): Security vulnerabilities, data loss, correctness bugs
+  - P1 (High): Logic errors, SOLID violations, performance regression
+  - P2 (Medium): Code smells, maintainability concerns
+  - P3 (Low): Style, naming, minor suggestions
+
+workflow:
+  steps:
+    - name: "Preflight Context"
+      description: "Analyze git diff scope, scale, and critical paths"
+      
+    - name: "SOLID & Architecture"
+      description: "Check architecture quality and design patterns"
+      reference: "references/solid-checklist.md"
+
+    - name: "Removal Candidates"
+      description: "Identify unused code and plan safe removal"
+      reference: "references/removal-plan.md"
+
+    - name: "Security & Reliability"
+      description: "Detect security vulnerabilities and runtime risks"
+      reference: "references/security-checklist.md"
+
+    - name: "Code Quality Scan"
+      description: "Review code quality across all areas and technologies"
+      references:
+        - "references/code-quality-checklist.md"
+        - "references/component-organization-checklist.md"
+        - "references/typescript-checklist.md"
+        - "references/react-native-checklist.md"
+        - "references/redux-checklist.md"
+        - "references/native-bridge-checklist.md"
+
+    - name: "Review Output"
+      description: "Present findings in structured format"
+
+    - name: "Next Steps Confirmation"
+      description: "Ask user how to proceed"
+
+decision_rules:
+  blocking_criteria:
+    - P0 issues present (security, data loss, crashes)
+    - P1 issues unresolved
+  
+  approvable_criteria:
+    - No P0 issues
+    - P1 issues resolved or explained
+    - P2 issues acceptable or deferrable
+
+references:
+  - file: "references/SKILL.md"
+    description: "Complete workflow guide with detailed steps and examples"
+  - file: "references/README.md"
+    description: "Index of all checklists and usage guide"
+  - file: "references/solid-checklist.md"
+    description: "SOLID principles and architecture smells"
+  - file: "references/security-checklist.md"
+    description: "Security vulnerabilities and runtime risks"
+  - file: "references/code-quality-checklist.md"
+    description: "Error handling, performance, boundary conditions"
+  - file: "references/component-organization-checklist.md"
+    description: "React component size, structure, hooks"
+  - file: "references/typescript-checklist.md"
+    description: "TypeScript type safety and best practices"
+  - file: "references/react-native-checklist.md"
+    description: "React Native lifecycle, performance, platform"
+  - file: "references/redux-checklist.md"
+    description: "Redux state, reducers, selectors, middleware"
+  - file: "references/native-bridge-checklist.md"
+    description: "Swift/Kotlin bridge, memory, threading"
+  - file: "references/removal-plan.md"
+    description: "Safe code removal and migration planning"
 
 # Agent-agnostic skill - works with any LLM provider.
 # No provider-specific configuration required.

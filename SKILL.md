@@ -65,10 +65,20 @@ Perform a structured review of the current git changes with focus on SOLID, arch
 ### 5) Code quality scan
 
 - Load `references/code-quality-checklist.md` for coverage.
+- Load `references/component-organization-checklist.md` if changes include React/React Native components.
+- Load `references/typescript-checklist.md` if changes include TypeScript code.
+- Load `references/react-native-checklist.md` if changes include React Native code.
+- Load `references/redux-checklist.md` if changes include Redux code.
+- Load `references/native-bridge-checklist.md` if changes include native code (Swift, Kotlin) or bridge methods.
 - Check for:
   - **Error handling**: swallowed exceptions, overly broad catch, missing error handling, async errors
   - **Performance**: N+1 queries, CPU-intensive ops in hot paths, missing cache, unbounded memory
   - **Boundary conditions**: null/undefined handling, empty collections, numeric boundaries, off-by-one
+  - **Component organization**: Component size, single responsibility, JSX structure, hook patterns
+  - **TypeScript specific**: Type safety, use of `any`, null handling, function signatures, generics, enums
+  - **React Native specific**: Memory leaks, lifecycle issues, FlatList optimization, platform differences, safe area handling
+  - **Redux specific**: State normalization, reducer purity, selector memoization, async middleware patterns
+  - **Native bridge specific**: Memory leaks across bridge, thread safety, type conversion, error propagation, platform differences
 - Flag issues that may cause silent failures or production incidents.
 
 ### 6) Output format
@@ -146,11 +156,219 @@ Please choose an option or provide specific instructions.
 
 ## Resources
 
-### references/
+### Complete Checklist Reference
 
-| File | Purpose |
-|------|---------|
-| `solid-checklist.md` | SOLID smell prompts and refactor heuristics |
-| `security-checklist.md` | Web/app security and runtime risk checklist |
-| `code-quality-checklist.md` | Error handling, performance, boundary conditions |
-| `removal-plan.md` | Template for deletion candidates and follow-up plan |
+| File | Purpose | When to Load |
+|------|---------|--------------|
+| `solid-checklist.md` | SOLID principles, architecture smells, refactor heuristics | Always (step 2) |
+| `security-checklist.md` | Security vulnerabilities, crypto, race conditions, data integrity | Always (step 4) |
+| `code-quality-checklist.md` | Error handling, performance, boundary conditions | Always (step 5) |
+| `component-organization-checklist.md` | Component size, JSX structure, hook patterns | React/RN components |
+| `typescript-checklist.md` | Type safety, generics, interfaces, narrowing | TypeScript files |
+| `react-native-checklist.md` | Memory leaks, lifecycle, FlatList, platform differences | React Native code |
+| `redux-checklist.md` | State shape, reducers, selectors, async | Redux code |
+| `native-bridge-checklist.md` | Swift/Kotlin, bridge communication, thread safety | Native code or bridge |
+| `removal-plan.md` | Template for safe removal and migration planning | Deletion/refactoring |
+
+See `references/README.md` for comprehensive index and usage guide.
+
+---
+
+## Detailed Workflow Guidance
+
+### Step 1: Preflight Context - Key Questions
+
+**What to analyze:**
+- How many files changed? (2 vs 20 vs 100)
+- Feature, bugfix, or refactor?
+- Changes in critical paths (auth, payments, database)?
+- Any cascading changes requiring 10+ files?
+
+**Commands to run:**
+```bash
+git status -sb              # Quick overview
+git diff --stat             # File-level summary
+git diff                    # Full diff
+git diff --name-only | wc -l # Count files
+```
+
+---
+
+### Step 2: SOLID Check - Core Anti-patterns
+
+**SRP violations** (most common):
+- Module handles auth + payments + notifications
+- Service validates, fetches, caches, and logs
+
+**OCP violations**:
+- Adding new payment type requires editing 5 switch statements
+- New user role requires modifying UserService class
+
+**Refactor suggestions**:
+- Show before/after
+- Explain *why* (improves cohesion, enables testing)
+- Suggest incremental steps if complex
+
+---
+
+### Step 3: Removal Candidates - Classification
+
+**Safe to remove now** (do it):
+- Dead code with zero references
+- No external API
+- No dependencies on this code
+
+**Defer removal** (create plan):
+- Active consumers
+- Breaking change required
+- Needs migration period
+
+---
+
+### Step 4: Security - High-Impact Checks
+
+**Must check** (security-sensitive):
+- New auth endpoints protected? ✅ or ❌
+- Authorization checks present? ✅ or ❌
+- No secrets in code? ✅ or ❌
+- SQL/NoSQL injection possible? ✅ or ❌
+- Race conditions in concurrent code? ✅ or ❌
+
+**Report format**:
+- "Is this exploitable?" (Yes/No)
+- "What's the impact?" (read data? modify? crash?)
+
+---
+
+### Step 5: Code Quality - Language-Specific
+
+**TypeScript**:
+- Any usage of `any`?
+- Null checks present?
+- Function return types explicit?
+
+**React/RN components**:
+- Component > 200 lines?
+- useEffect cleanup present?
+- Keys on lists?
+
+**Redux**:
+- State normalized?
+- Selectors memoized?
+
+**Native (Swift/Kotlin)**:
+- Memory leaks in closures?
+- Thread-safe access?
+
+---
+
+## Common Review Patterns
+
+### Pattern: Component Too Large
+**Signs**: 300+ lines, multiple useState, multiple useEffect, deeply nested JSX
+**Fix**: Split into smaller focused components
+**Reference**: `component-organization-checklist.md`
+
+### Pattern: Memory Leak
+**Signs**: useEffect no cleanup, event listener not removed, timer not cleared
+**Fix**: Add cleanup function
+**Reference**: `react-native-checklist.md`
+
+### Pattern: Type Confusion
+**Signs**: `any` usage, force casting with `as`
+**Fix**: Use proper types, type guards
+**Reference**: `typescript-checklist.md`
+
+### Pattern: Race Condition
+**Signs**: Concurrent writes, check-then-act, no locks
+**Fix**: Use atomic operations or distributed locks
+**Reference**: `security-checklist.md`
+
+---
+
+## Quick Decision Guide
+
+### Should I block this PR?
+
+```
+P0 issues present? → BLOCK ❌
+P1 issues unresolved? → BLOCK ❌
+P2 issues but deferrable? → REQUEST CHANGES (allow follow-up)
+All clear? → APPROVE ✅
+```
+
+### Is component size a problem?
+
+```
+> 300 lines? → YES, too large
+7+ useState hooks? → YES, too much state
+4+ levels JSX nesting? → YES, unreadable
+Multiple useEffect for unrelated logic? → YES, split
+```
+
+### Is this a memory leak?
+
+```
+useEffect without cleanup? ⚠️
+Event listener unsubscribed? ✅ or ❌
+Timer/callback cleared? ✅ or ❌
+"this" binding released? ✅ or ❌
+```
+
+---
+
+## Example Review Output
+
+```markdown
+## Code Review Summary
+
+**Files**: src/auth/useAuth.ts (45 lines), src/Login.tsx (120 lines)
+**Assessment**: REQUEST_CHANGES
+
+---
+
+## P0 - Critical
+
+1. **src/auth/useAuth.ts:23** - Hardcoded API key
+   - **Issue**: `const API_KEY = 'sk_live_123'` exposed in code
+   - **Risk**: If repo leaked, key compromised
+   - **Fix**: Use `process.env.API_KEY`
+
+## P1 - High
+
+2. **src/Login.tsx:45** - Missing error handling
+   - **Issue**: `login()` call not wrapped in try/catch
+   - **Risk**: Unhandled promise rejection crashes app
+   - **Fix**: Add `.catch()` or wrap in try/catch
+
+## P2 - Medium
+
+3. **src/Login.tsx:15** - useEffect cleanup missing
+   - **Issue**: Subscription created but never removed
+   - **Risk**: Memory leak on unmount
+   - **Fix**: Return cleanup function with `unsubscribe()`
+
+## Next Steps
+
+1. Fix P0 issues (hardcoded key)
+2. Fix P1 issues (error handling)
+3. P2 deferrable to follow-up PR
+
+Ready when you are!
+```
+
+---
+
+## Important Reminders
+
+🔴 **Do NOT implement changes without explicit user confirmation** through the workflow.
+
+✅ **DO be specific** - Line numbers, code samples, exact issues
+
+✅ **DO explain rationale** - Why this matters, not just "fix it"
+
+✅ **DO offer examples** - "Here's bad, here's better"
+
+✅ **DO prioritize correctly** - P0 blocks, P2 doesn't
+
+✅ **DO praise good patterns** - See something good? Call it out
